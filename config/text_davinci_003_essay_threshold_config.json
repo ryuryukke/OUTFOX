@@ -1,0 +1,5 @@
+{
+    "roberta-base-openai-detector": 0.0113,
+    "roberta-large-openai-detector": 0.0207,
+    "Hello-SimpleAI/chatgpt-detector-roberta": 0.9996
+}
