@@ -10,7 +10,9 @@ $ pip install -r requirements.txt
 ```
 Run any script in the `scripts` directory.
 
-`scripts/detection.sh` is a script for our OUTFOX detection and baseline detections, and `scripts/attacking.sh` is a script for our OUTFOX attacking and baseline paraphrasing attack.
+`scripts/detection.sh` is a script for our OUTFOX detection and baseline detections.
+
+`scripts/attacking.sh` is a script for our OUTFOX attacking and baseline paraphrasing attack.
 
 ## :page_facing_up: Dataset Info
 We created our dataset based on [Kaggle FeedBack Prize](https://www.kaggle.com/competitions/feedback-prize-effectiveness) and contains 15,400 triplets of essay problem statements, human(native-student)-written essays, and LLM-generated essays. The native students range from 6th to 12th grade in the U.S.
