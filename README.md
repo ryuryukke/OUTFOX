@@ -15,7 +15,7 @@ Run any script in the `scripts` directory.
 `scripts/attacking.sh` is a script for our OUTFOX attacking and baseline paraphrasing attack.
 
 ## :page_facing_up: Dataset Info
-We created our dataset based on [Kaggle FeedBack Prize](https://www.kaggle.com/competitions/feedback-prize-effectiveness) and contains 15,400 triplets of essay problem statements, human(native-student)-written essays, and LLM-generated essays. The native students range from 6th to 12th grade in the U.S.
+We created our dataset based on [Kaggle FeedBack Prize](https://www.kaggle.com/competitions/feedback-prize-effectiveness), and our dataset contains 15,400 triplets of essay problem statements, human(native-student)-written essays, and LLM-generated essays. The native students range from 6th to 12th grade in the U.S.
 
 We instruct three LMs to generate essays: ChatGPT(`gpt-3.5-turbo-0613`), GPT-3.5(`text-davinci-003`), and `FLAN-T5-XXL`.
 We split the dataset into three parts: train/validation/test with 14400/500/500 examples, respectively.
