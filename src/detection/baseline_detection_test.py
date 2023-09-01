@@ -11,6 +11,8 @@ import argparse
 import functools
 import time
 from torch.nn import CrossEntropyLoss
+import sys
+sys.path.append('/groups/gcb50243/koike/OUTFOX')
 from utils.utils import json2dict, load_pkl, save_pkl
 
 
@@ -459,6 +461,6 @@ if __name__ == "__main__":
                 )
     else:
         print('Starting baseline inference of supervised classifiers on a test set...')
-        eval_supervised_(model="nealcly/detection-longformer")
         eval_supervised_(model="roberta-base-openai-detector")
         eval_supervised_(model="roberta-large-openai-detector")
+        eval_supervised_(model="Hello-SimpleAI/chatgpt-detector-roberta")
