@@ -76,9 +76,9 @@ def main():
     attacking_method = args.attacking_method
     model_name = args.model_name
     
-    preds_path = f'../results/outfox_detection/with_considering_{attacking_method}_attack_{model_name}.log'
+    preds_path = f'../../results/outfox_detection/with_considering_{attacking_method}_attack_{model_name}.log'
     
-    test_data, test_labels, test_pss = make_mixed_data('../data/common/test/test_humans.pkl', f'../data/{model_name}/test/test_lms.pkl', '../data/common/test/test_problem_statements.pkl')
+    test_data, test_labels, test_pss = make_mixed_data('../../data/common/test/test_humans.pkl', f'../../data/{model_name}/test/test_lms.pkl', '../../data/common/test/test_problem_statements.pkl')
 
     dp = DipperParaphraser(0) if attacking_method == 'paraphrase' else None
 
@@ -86,8 +86,8 @@ def main():
 
     # Loading top-k (problem statement, human-written essay, LLM-generated essay) sets retrieved in advance based on the problem statement, using tf-idf.
     # Whatever LMs (FLAN, GPT-3.5) to be detected, our OUTFOX detector consider the essays by ChatGPT.
-    test_ps_to_near_ps_human_lm_pairs_from_train = load_pkl(f'../data/chatgpt/util/test_ps_to_near_ps_human_lm_pairs_from_train.pkl')
-    train_ps_to_near_ps_human_lm_pairs_from_train = load_pkl(f'../data/chatgpt/util/train_ps_to_near_ps_human_lm_pairs_from_train.pkl')
+    test_ps_to_near_ps_human_lm_pairs_from_train = load_pkl(f'../../data/chatgpt/util/test_ps_to_near_ps_human_lm_pairs_from_train.pkl')
+    train_ps_to_near_ps_human_lm_pairs_from_train = load_pkl(f'../../data/chatgpt/util/train_ps_to_near_ps_human_lm_pairs_from_train.pkl')
 
     preds = detection_by_chatgpt(test_data, test_pss, test_ps_to_near_ps_human_lm_pairs_from_train, train_ps_to_near_ps_human_lm_pairs_from_train, preds_path, dp, attacking_method)
 

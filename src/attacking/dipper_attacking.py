@@ -68,9 +68,9 @@ if __name__ == "__main__":
     cuda_num = args.cuda_num
 
     dp = DipperParaphraser(cuda_num)
-    input_texts = load_pkl(f'../data/{model_name}/test/test_lms.pkl')
+    input_texts = load_pkl(f'../../data/{model_name}/test/test_lms.pkl')
     attacks_by_dipper = []
     for input_text in tqdm(input_texts, desc=f'DIPPER Paraphrasing...'):
         output_l60_o60_sample = dp.paraphrase(input_text, lex_diversity=60, order_diversity=60, prefix='', do_sample=True, top_p=0.75, top_k=None, max_length=4096)
         attacks_by_dipper.append(output_l60_o60_sample)
-    save_pkl(attacks_by_dipper, f'../data/dipper/{model_name}/test_attacks.pkl')
+    save_pkl(attacks_by_dipper, f'../../data/dipper/{model_name}/test_attacks.pkl')

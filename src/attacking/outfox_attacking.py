@@ -27,16 +27,16 @@ def make_attacked_test(test_humans, test_problem_statements, test_ps_to_near_ps_
 
 
 def main():
-    test_humans = load_pkl('../data/common/test/test_humans.pkl')
-    test_problem_statements = load_pkl('../data/common/test/test_problem_statements.pkl')
+    test_humans = load_pkl('../../data/common/test/test_humans.pkl')
+    test_problem_statements = load_pkl('../../data/common/test/test_problem_statements.pkl')
 
     # Loading top-k (problem statement, human-written essay, LLM-generated essay) sets retrieved in advance based on the problem statement, using tf-idf.
     # Whatever LMs (FLAN, GPT-3.5) to be detected, our OUTFOX detector consider the essays by ChatGPT.
-    test_ps_to_near_ps_human_lm_pairs_from_train = load_pkl(f'../data/chatgpt/util/test_ps_to_near_ps_human_lm_pairs_from_train.pkl')
-    train_ps_to_near_ps_human_lm_pairs_from_train = load_pkl(f'../data/chatgpt/util/train_ps_to_near_ps_human_lm_pairs_from_train.pkl')
+    test_ps_to_near_ps_human_lm_pairs_from_train = load_pkl(f'../../data/chatgpt/util/test_ps_to_near_ps_human_lm_pairs_from_train.pkl')
+    train_ps_to_near_ps_human_lm_pairs_from_train = load_pkl(f'../../data/chatgpt/util/train_ps_to_near_ps_human_lm_pairs_from_train.pkl')
 
     attacked_test = make_attacked_test(test_humans, test_problem_statements, test_ps_to_near_ps_human_lm_pairs_from_train, train_ps_to_near_ps_human_lm_pairs_from_train)
-    save_pkl(attacked_test, f'../data/chatgpt/test/test_outfox_attacks.pkl')
+    save_pkl(attacked_test, f'../../data/chatgpt/test/test_outfox_attacks.pkl')
     print('Complete!')
 
 
