@@ -10,6 +10,8 @@ import time
 import functools
 from torch.nn import CrossEntropyLoss
 from sklearn.metrics import roc_curve, precision_recall_curve, auc
+import sys
+sys.path.append('/groups/gcb50243/koike/OUTFOX')
 from utils.utils import load_pkl, save_pkl
 
 
@@ -303,7 +305,7 @@ def get_perturbation_results(span_length=2, n_perturbations=100):
             }
         )
     
-    save_pkl(results, '../data/flan_t5_xxl/valid/valid_perturbed_results.pkl')
+    save_pkl(results, '../../data/flan_t5_xxl/valid/valid_perturbed_results.pkl')
 
     load_base_model()
 
@@ -450,31 +452,27 @@ if __name__ == "__main__":
     n_perturbation_list = [int(x) for x in args.n_perturbation_list.split(",")]
     n_perturbation_rounds = args.n_perturbation_rounds
 
-    print(f"Loading mask filling model {mask_filling_model_name}...")
-    mask_model = transformers.AutoModelForSeq2SeqLM.from_pretrained(mask_filling_model_name)
-    try:
-        n_positions = mask_model.config.n_positions
-    except AttributeError:
-        n_positions = 512
-    preproc_tokenizer = transformers.AutoTokenizer.from_pretrained("t5-small", model_max_length=512)
-    mask_tokenizer = transformers.AutoTokenizer.from_pretrained(mask_filling_model_name, model_max_length=n_positions)
-
     if args.base_model_name == 'flan_t5_xxl':
+        print(f"Loading mask filling model {mask_filling_model_name}...")
+        mask_model = transformers.AutoModelForSeq2SeqLM.from_pretrained(mask_filling_model_name)
+        n_positions = mask_model.config.n_positions
+        preproc_tokenizer = transformers.AutoTokenizer.from_pretrained("t5-small", model_max_length=512)
+        mask_tokenizer = transformers.AutoTokenizer.from_pretrained(mask_filling_model_name, model_max_length=n_positions)
         print(f"Loading essay generation model {args.base_model_name}...")
         base_model, base_tokenizer = load_base_model_and_tokenizer('google/flan-t5-xxl')
         load_base_model()
 
     print(f"Loading a dev test of {args.base_model_name}...")
     data = dict()
-    data['lm'] = load_pkl(f'../data/{args.base_model_name}/valid/valid_lms.pkl')
-    data['human'] = load_pkl('../data/common/valid/valid_humans.pkl')
+    data['lm'] = load_pkl(f'../../data/{args.base_model_name}/valid/valid_lms.pkl')
+    data['human'] = load_pkl('../../data/common/valid/valid_humans.pkl')
     # 'context' is the instruction we used when generating essays.
-    data['context'] = load_pkl(f'../data/{args.base_model_name}/valid/valid_contexts.pkl')
+    data['context'] = load_pkl(f'../../data/common/valid/valid_contexts.pkl')
     
     humans, lms = data['human'][:], data['lm'][:]
     data['human'], data['lm'] = [], []
     for human, lm in zip(humans, lms):
-        human, lms = trim_to_shorter_length(human, lms)
+        human, lm = trim_to_shorter_length(human, lm)
         data['human'].append(human)
         data['lm'].append(lm)
 

@@ -264,7 +264,7 @@ def get_perturbation_results_(span_length=10, n_perturbations=1, n_samples=500):
             }
         )
 
-    save_pkl(results, '../data/flan_t5_xxl/test/essay_test_perturbed_results.pkl')
+    save_pkl(results, '../../data/flan_t5_xxl/test/essay_test_perturbed_results.pkl')
 
     load_base_model()
 
@@ -361,10 +361,10 @@ def run_baseline_threshold_experiment_(criterion_fn, name, n_samples=500):
 
 def mixed_human_lm_dataset(model_name):
     random.seed(42)
-    human_texts = load_pkl('../data/common/test/test_humans.pkl')
+    human_texts = load_pkl('../../data/common/test/test_humans.pkl')
     # When you evaluate detectors on attacked texts, please specify a path to attacked texts.
-    lm_texts = load_pkl(f'../data/{model_name}/test/test_lms.pkl')
-    contexts = load_pkl(f'../data/{model_name}/test/test_contexts.pkl')
+    lm_texts = load_pkl(f'../../data/{model_name}/test/test_lms.pkl')
+    contexts = load_pkl(f'../../data/common/test/test_contexts.pkl')
     
     human_texts_with_label, lm_texts_with_label = [(human_text, '0', context) for human_text, context in zip(human_texts, contexts)], [(lm_text, '1', context) for lm_text, context in zip(lm_texts, contexts)]
     all_texts_with_label = human_texts_with_label + lm_texts_with_label
@@ -428,24 +428,20 @@ if __name__ == "__main__":
     n_perturbation_list = [int(x) for x in args.n_perturbation_list.split(",")]
     n_perturbation_rounds = args.n_perturbation_rounds
 
-    # mask filling t5 model
-    print(f"Loading mask filling model {mask_filling_model_name}...")
-    mask_model = transformers.AutoModelForSeq2SeqLM.from_pretrained(mask_filling_model_name)
-    try:
-        n_positions = mask_model.config.n_positions
-    except AttributeError:
-        n_positions = 512
-    preproc_tokenizer = transformers.AutoTokenizer.from_pretrained("t5-small", model_max_length=512)
-    mask_tokenizer = transformers.AutoTokenizer.from_pretrained(mask_filling_model_name, model_max_length=n_positions)
-
     if args.base_model_name == 'flan_t5_xxl':
+        # mask filling t5 model
+        print(f"Loading mask filling model {mask_filling_model_name}...")
+        mask_model = transformers.AutoModelForSeq2SeqLM.from_pretrained(mask_filling_model_name)
+        n_positions = mask_model.config.n_positions
+        preproc_tokenizer = transformers.AutoTokenizer.from_pretrained("t5-small", model_max_length=512)
+        mask_tokenizer = transformers.AutoTokenizer.from_pretrained(mask_filling_model_name, model_max_length=n_positions)
         print(f"Loading essay generation model {args.base_model_name}...")
         base_model, base_tokenizer = load_base_model_and_tokenizer('google/flan-t5-xxl')
         load_base_model()
     
     print(f"Loading a test test of {args.base_model_name}...")
     all_data = mixed_human_lm_dataset(args.base_model_name)
-    fixed_threshold = json2dict(f'../config/{args.base_model_name}_essay_threshold_config.json')
+    fixed_threshold = json2dict(f'../../config/{args.base_model_name}_essay_threshold_config.json')
 
     if args.base_model_name == 'flan_t5_xxl':
         print('Starting baseline inference of statistical outlier approaches on a test set...')
