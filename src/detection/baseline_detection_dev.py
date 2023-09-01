@@ -10,8 +10,6 @@ import time
 import functools
 from torch.nn import CrossEntropyLoss
 from sklearn.metrics import roc_curve, precision_recall_curve, auc
-import sys
-sys.path.append('/groups/gcb50243/koike/OUTFOX')
 from utils.utils import load_pkl, save_pkl
 
 

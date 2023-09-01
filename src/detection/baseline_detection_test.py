@@ -11,8 +11,6 @@ import argparse
 import functools
 import time
 from torch.nn import CrossEntropyLoss
-import sys
-sys.path.append('/groups/gcb50243/koike/OUTFOX')
 from utils.utils import json2dict, load_pkl, save_pkl
 
 

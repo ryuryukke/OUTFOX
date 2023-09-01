@@ -174,3 +174,4 @@ def compute_metrics(labels, preds):
     human_rec, machine_rec, avg_rec = compute_three_recalls(labels, preds)
     acc, precision, recall, f1 = accuracy_score(labels, preds), precision_score(labels, preds, pos_label='1'), recall_score(labels, preds, pos_label='1'), f1_score(labels, preds, pos_label='1')
     return (human_rec, machine_rec, avg_rec, acc, precision, recall, f1)
+
