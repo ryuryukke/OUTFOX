@@ -1,7 +1,7 @@
 {
-    "entropy": 0.0901,
-    "rank": -281.25,
+    "entropy": 0.0864,
+    "rank": -281.53,
     "logrank": -3.372,
     "likelihood": -13.26,
-    "detectgpt": -0.654
+    "detectgpt": -0.668
 }
