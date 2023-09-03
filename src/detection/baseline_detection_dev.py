@@ -314,7 +314,7 @@ def get_perturbation_results(span_length=2, n_perturbations=100):
             {
                 "original": original_text[idx],
                 "sampled": sampled_text[idx],
-                'context': context_text[idx] if type_of_task != 'open-ended' else None,
+                'context': context_text[idx],
                 "perturbed_sampled": p_sampled_text[idx * n_perturbations : (idx + 1) * n_perturbations],
                 "perturbed_original": p_original_text[idx * n_perturbations : (idx + 1) * n_perturbations],
             }
@@ -484,15 +484,8 @@ if __name__ == "__main__":
         # essay generation model
         base_model, base_tokenizer = load_base_model_and_tokenizer('google/flan-t5-xxl')
         # mask filling t5 model
-        int8_kwargs = {}
-        half_kwargs = {}
-        if args.int8:
-            int8_kwargs = dict(load_in_8bit=True, device_map="auto", torch_dtype=torch.bfloat16)
-        elif args.half:
-            half_kwargs = dict(torch_dtype=torch.bfloat16)
         print(f"Loading mask filling model {mask_filling_model_name}...")
-        mask_model = transformers.AutoModelForSeq2SeqLM.from_pretrained(
-            mask_filling_model_name, **int8_kwargs, **half_kwargs)
+        mask_model = transformers.AutoModelForSeq2SeqLM.from_pretrained(mask_filling_model_name)
         try:
             n_positions = mask_model.config.n_positions
         except AttributeError:
@@ -519,7 +512,7 @@ if __name__ == "__main__":
     ## Preparing essay data to be detected ##
 
     if args.base_model_name == 'flan_t5_xxl':
-        # Statistical Outlier Approaches
+        # # Statistical Outlier Approaches
         run_baseline_threshold_experiment(get_ll, "likelihood", n_samples=sample_num)
         run_baseline_threshold_experiment(get_rank, "rank", n_samples=sample_num)
         run_baseline_threshold_experiment(get_rank, "logrank", n_samples=sample_num)

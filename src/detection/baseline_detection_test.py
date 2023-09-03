@@ -1,4 +1,5 @@
 import numpy as np
+import datasets
 import transformers
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 import re
@@ -6,16 +7,39 @@ import torch
 import torch.nn.functional as F
 import tqdm
 import random
+from sklearn.metrics import roc_curve, precision_recall_curve, auc
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import argparse
+import os
+import json
+import nltk
+import pickle
 import functools
 import time
 from torch.nn import CrossEntropyLoss
-from utils.utils import json2dict, load_pkl, save_pkl
+from IPython.core.debugger import Pdb
 
 
 # define regex to match all <extra_id_*> tokens, where * is an integer
 pattern = re.compile(r"<extra_id_\d+>")
+
+
+def json2dict(path):
+    with open(path, mode="rt", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
+
+
+def str2bool(v):
+    """Util function for user friendly boolean flag args"""
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
 def load_base_model():
@@ -35,13 +59,6 @@ def load_mask_model():
     base_model.cpu()
     mask_model.to(DEVICE)
     print(f"DONE ({time.time() - start:.2f}s)")
-
-
-def load_base_model_and_tokenizer(name):
-    base_model = T5ForConditionalGeneration.from_pretrained(name, torch_dtype=torch.float16, offload_folder="offload")
-    base_tokenizer = T5Tokenizer.from_pretrained(name)
-    base_tokenizer.pad_token_id = base_tokenizer.eos_token_id
-    return base_model, base_tokenizer
 
 
 def tokenize_and_mask(text, span_length, pct, ceil_pct=False):
@@ -133,6 +150,8 @@ def perturb_texts_(texts, span_length, pct, ceil_pct=False):
     while "" in perturbed_texts:
         idxs = [idx for idx, x in enumerate(perturbed_texts) if x == ""]
         print(f"WARNING: {len(idxs)} texts have no fills. Trying again [attempt {attempts}].")
+        # from IPython.core.debugger import Pdb
+        # Pdb().set_trace()
         masked_texts = [tokenize_and_mask(x, span_length, pct, ceil_pct) for idx, x in enumerate(texts) if idx in idxs]
         raw_fills = replace_masks(masked_texts)
         extracted_fills = extract_fills(raw_fills)
@@ -157,23 +176,30 @@ def perturb_texts(texts, span_length, pct, ceil_pct=False):
 
 # Get the log likelihood of each text under the base_model
 def get_ll(text, context):
-    device = base_model.device
     with torch.no_grad():
         text = context + text
         if len(preproc_tokenizer.tokenize(text)) > 510:
             text = preproc_tokenizer.decode(preproc_tokenizer(text)['input_ids'][:510])
-        # only for flan-t5-xxl
-        contexts = base_tokenizer.tokenize(context)
-        input_ids = base_tokenizer.encode(text, return_tensors="pt").to(device)
-        logits = base_model(input_ids=input_ids, labels=input_ids).logits
-        logits = logits.view(-1, logits.shape[-1])[len(contexts) - 1: -1, :]
-        labels = input_ids.view(-1)[len(contexts):]
+
+        if 'flan' in args.base_model_name:
+            contexts = base_tokenizer.tokenize(context)
+            input_ids = base_tokenizer.encode(text, return_tensors="pt").to(DEVICE)
+            logits = base_model(input_ids=input_ids, labels=input_ids).logits
+            logits = logits.view(-1, logits.shape[-1])[len(contexts) - 1: -1, :]
+            labels = input_ids.view(-1)[len(contexts):]
+        else:
+            contexts = base_tokenizer.tokenize(context, return_tensors="pt")
+            tokenized = base_tokenizer(text, return_tensors="pt").to(DEVICE)
+            labels = tokenized.input_ids
+            logits = base_model(**tokenized, labels=labels).logits
+            logits = logits.view(-1, logits.shape[-1])[len(contexts) - 1: -1, :]
+            labels = labels.view(-1)[len(contexts):]
         
         loss_fn = CrossEntropyLoss()
         return -float(loss_fn(logits, labels))
 
 
-def get_lls(texts, context):
+def get_lls(texts, context=None):
     if context:
         return [get_ll(text, context) for text in texts]
     else:
@@ -181,18 +207,23 @@ def get_lls(texts, context):
 
 
 # get the average rank of each observed token sorted by model likelihood
-def get_rank(text, context, log=False):
+def get_rank(text, context=None, log=False):
     device = base_model.device
     with torch.no_grad():
         text = context + text
         if len(preproc_tokenizer.tokenize(text)) > 510:
             text = preproc_tokenizer.decode(preproc_tokenizer(text)['input_ids'][:510])
         
-        # only for flan-t5-xxl
-        contexts = base_tokenizer.tokenize(context)
-        input_ids = base_tokenizer.encode(text, return_tensors="pt").to(device)
-        logits = base_model(input_ids=input_ids, labels=input_ids).logits[:, len(contexts) - 1:-1]
-        labels = input_ids[:, len(contexts):]
+        if 'flan' in args.base_model_name:
+            contexts = base_tokenizer.tokenize(context)
+            input_ids = base_tokenizer.encode(text, return_tensors="pt").to(device)
+            logits = base_model(input_ids=input_ids, labels=input_ids).logits[:, len(contexts) - 1:-1]
+            labels = input_ids[:, len(contexts):]
+        else:
+            contexts = base_tokenizer.tokenize(context, return_tensors='pt')
+            tokenized = base_tokenizer(text, return_tensors="pt").to(device)
+            logits = base_model(**tokenized).logits[:, len(contexts) - 1:-1]
+            labels = tokenized.input_ids[:, len(contexts):]
 
         # get rank of each label token in the model's likelihood ordering
         matches = (logits.argsort(-1, descending=True) == labels.unsqueeze(-1)).nonzero()
@@ -214,17 +245,21 @@ def get_rank(text, context, log=False):
 
 
 # get average entropy of each token in the text
-def get_entropy(text, context):
+def get_entropy(text, context=None):
     device = base_model.device
     with torch.no_grad():
         text = context + text
         if len(preproc_tokenizer.tokenize(text)) > 510:
             text = preproc_tokenizer.decode(preproc_tokenizer(text)['input_ids'][:510])
         
-        # only for flan-t5-xxl
-        contexts = base_tokenizer.tokenize(context)
-        input_ids = base_tokenizer.encode(text, return_tensors="pt").to(device)
-        logits = base_model(input_ids=input_ids, labels=input_ids).logits[:, len(contexts) - 1:-1]
+        if 'flan' in args.base_model_name:
+            contexts = base_tokenizer.tokenize(context)
+            input_ids = base_tokenizer.encode(text, return_tensors="pt").to(device)
+            logits = base_model(input_ids=input_ids, labels=input_ids).logits[:, len(contexts) - 1:-1]
+        else:
+            contexts = base_tokenizer.tokenize(context, return_tensors='pt')
+            tokenized = base_tokenizer(text, return_tensors="pt").to(device)
+            logits = base_model(**tokenized).logits[:, len(contexts) - 1:-1]
 
         neg_entropy = F.softmax(logits, dim=-1) * F.log_softmax(logits, dim=-1)
         return -neg_entropy.sum(-1).mean().item()
@@ -239,6 +274,7 @@ def get_perturbation_results_(span_length=10, n_perturbations=1, n_samples=500):
     results = []
     all_texts = list(map(lambda x: x[0], [data for data in all_data]))
     all_texts = [mask_tokenizer.decode(mask_tokenizer(text)['input_ids'][:510]) if len(mask_tokenizer.tokenize(text)) > 510 else text for text in all_texts]
+
     context_text = list(map(lambda x: x[2], [data for data in all_data]))
 
     perturb_fn = functools.partial(perturb_texts, span_length=span_length, pct=args.pct_words_masked)
@@ -264,7 +300,8 @@ def get_perturbation_results_(span_length=10, n_perturbations=1, n_samples=500):
             }
         )
 
-    save_pkl(results, '../../data/flan_t5_xxl/test/essay_test_perturbed_results.pkl')
+    with open('../../data/flan_t5_xxl/test/essay_test_perturbed_results.pkl', 'wb') as f:
+        pickle.dump(results, f)
 
     load_base_model()
 
@@ -304,7 +341,7 @@ def compute_real_metrics(pred_scores, labels, detect_method_name):
     return (human_rec, machine_rec, avg_rec, acc, precision, recall, f1)
 
 
-def run_perturbation_experiment_(results, criterion):
+def run_perturbation_experiment_(results, criterion, span_length=10, n_perturbations=1, n_samples=500):
     # compute diffs with perturbed
     predictions = []
     for res in results:
@@ -359,12 +396,12 @@ def run_baseline_threshold_experiment_(criterion_fn, name, n_samples=500):
     print(f"HumanRec: {human_rec}, MachineRec: {machine_rec}, AvgRec: {avg_rec}, Acc:{acc}, Precision:{precision}, Recall:{recall}, F1:{f1}")
 
 
-def mixed_human_lm_dataset(model_name):
+def mixed_human_lm_dataset(base_model_name):
     random.seed(42)
-    human_texts = load_pkl('../../data/common/test/test_humans.pkl')
-    # When you evaluate detectors on attacked texts, please specify a path to attacked texts.
-    lm_texts = load_pkl(f'../../data/{model_name}/test/test_lms.pkl')
-    contexts = load_pkl(f'../../data/common/test/test_contexts.pkl')
+    with open('../../data/common/test/test_humans.pkl', 'rb') as fa, open(f'../../data/{base_model_name}/test/test_lms.pkl', 'rb') as fb, open(f'../../data/common/test/test_contexts.pkl', 'rb') as fc:
+        human_texts = pickle.load(fa)
+        lm_texts = pickle.load(fb)
+        contexts = pickle.load(fc)
     
     human_texts_with_label, lm_texts_with_label = [(human_text, '0', context) for human_text, context in zip(human_texts, contexts)], [(lm_text, '1', context) for lm_text, context in zip(lm_texts, contexts)]
     all_texts_with_label = human_texts_with_label + lm_texts_with_label
@@ -373,9 +410,17 @@ def mixed_human_lm_dataset(model_name):
     return all_texts_with_label
 
 
+def load_base_model_and_tokenizer(name):
+    print(f"Loading BASE model {args.base_model_name}...")
+    base_model = T5ForConditionalGeneration.from_pretrained(name)
+    base_tokenizer = T5Tokenizer.from_pretrained(name)
+    base_tokenizer.pad_token_id = base_tokenizer.eos_token_id
+
+    return base_model, base_tokenizer
+
+
 def eval_supervised_(model):
     mixed_data = list(map(lambda x: x[0], all_data))
-
     print(f"Beginning supervised evaluation with {model}...")
     detector = transformers.AutoModelForSequenceClassification.from_pretrained(model).to(DEVICE)
     tokenizer = transformers.AutoTokenizer.from_pretrained(model)
@@ -395,9 +440,13 @@ def eval_supervised_(model):
     print(f'Model: {model}')
     print(f"HumanRec: {human_rec}, MachineRec: {machine_rec}, AvgRec: {avg_rec}, Acc:{acc}, Precision:{precision}, Recall:{recall}, F1:{f1}")
 
+    # free GPU memory
+    del detector
+    torch.cuda.empty_cache()
+
 
 if __name__ == "__main__":
-    DEVICE = "cuda:0"
+    DEVICE = "cuda:3"
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--pct_words_masked", type=float, default=0.3)  # pct masked is actually pct_words_masked * (span_length / (span_length + 2 * buffer_size))
@@ -410,6 +459,7 @@ if __name__ == "__main__":
     parser.add_argument("--mask_filling_model_name", type=str, default="t5-large")
     parser.add_argument("--batch_size", type=int, default=5)
     parser.add_argument("--chunk_size", type=int, default=20)
+    parser.add_argument("--base_half", action="store_true")
     parser.add_argument("--do_top_k", action="store_true")
     parser.add_argument("--top_k", type=int, default=40)
     parser.add_argument("--do_top_p", action="store_true")
@@ -429,22 +479,28 @@ if __name__ == "__main__":
     n_perturbation_rounds = args.n_perturbation_rounds
 
     if args.base_model_name == 'flan_t5_xxl':
-        # mask filling t5 model
+        # essay generation model
+        base_model, base_tokenizer = load_base_model_and_tokenizer('google/flan-t5-xxl')
+
         print(f"Loading mask filling model {mask_filling_model_name}...")
         mask_model = transformers.AutoModelForSeq2SeqLM.from_pretrained(mask_filling_model_name)
-        n_positions = mask_model.config.n_positions
+        try:
+            n_positions = mask_model.config.n_positions
+        except AttributeError:
+            n_positions = 512
+
         preproc_tokenizer = transformers.AutoTokenizer.from_pretrained("t5-small", model_max_length=512)
         mask_tokenizer = transformers.AutoTokenizer.from_pretrained(mask_filling_model_name, model_max_length=n_positions)
-        print(f"Loading essay generation model {args.base_model_name}...")
-        base_model, base_tokenizer = load_base_model_and_tokenizer('google/flan-t5-xxl')
+
         load_base_model()
-    
-    print(f"Loading a test test of {args.base_model_name}...")
+
+    print('Loading target essays to be detected...')
     all_data = mixed_human_lm_dataset(args.base_model_name)
+
     fixed_threshold = json2dict(f'../../config/{args.base_model_name}_essay_threshold_config.json')
 
     if args.base_model_name == 'flan_t5_xxl':
-        print('Starting baseline inference of statistical outlier approaches on a test set...')
+        # Statistical Outlier Approaches
         run_baseline_threshold_experiment_(get_ll, "likelihood", n_samples=sample_num)
         run_baseline_threshold_experiment_(get_rank, "rank", n_samples=sample_num)
         run_baseline_threshold_experiment_(get_rank, "logrank", n_samples=sample_num)
@@ -456,9 +512,12 @@ if __name__ == "__main__":
                 output = run_perturbation_experiment_(
                     perturbation_results,
                     perturbation_mode,
+                    span_length=args.span_length,
+                    n_perturbations=n_perturbations,
+                    n_samples=sample_num,
                 )
     else:
-        print('Starting baseline inference of supervised classifiers on a test set...')
+        # Supervised Classifiers
         eval_supervised_(model="roberta-base-openai-detector")
         eval_supervised_(model="roberta-large-openai-detector")
         eval_supervised_(model="Hello-SimpleAI/chatgpt-detector-roberta")
