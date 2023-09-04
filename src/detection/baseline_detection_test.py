@@ -363,6 +363,7 @@ def run_perturbation_experiment_(results, criterion, span_length=10, n_perturbat
     
     print(f'Model: detectgpt')
     print(f"HumanRec: {human_rec}, MachineRec: {machine_rec}, AvgRec: {avg_rec}, Acc:{acc}, Precision:{precision}, Recall:{recall}, F1:{f1}")
+    return f"HumanRec: {human_rec}, MachineRec: {machine_rec}, AvgRec: {avg_rec}, Acc:{acc}, Precision:{precision}, Recall:{recall}, F1:{f1}"
 
 
 def run_baseline_threshold_experiment_(criterion_fn, name, n_samples=500):
@@ -446,7 +447,7 @@ def eval_supervised_(model):
 
 
 if __name__ == "__main__":
-    DEVICE = "cuda:3"
+    DEVICE = "cuda:0"
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--pct_words_masked", type=float, default=0.3)  # pct masked is actually pct_words_masked * (span_length / (span_length + 2 * buffer_size))

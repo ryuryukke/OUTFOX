@@ -441,7 +441,7 @@ def eval_supervised(data, model):
 
 
 if __name__ == "__main__":
-    DEVICE = "cuda:2"
+    DEVICE = "cuda:0"
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--pct_words_masked", type=float, default=0.3)  # pct masked is actually pct_words_masked * (span_length / (span_length + 2 * buffer_size))
