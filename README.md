@@ -34,7 +34,7 @@ We also provide the attacked essays by our OUTFOX attacker in `data/chatgpt/test
 
 
 ## 📚 Citation
-#### If you use any part of this work, please cite it as follows:
+#### If our work inspires you, please consider citing our work as follows:
 ```
 @misc{koike2023outfox,
       title={OUTFOX: LLM-generated Essay Detection through In-context Learning with Adversarially Generated Examples}, 
