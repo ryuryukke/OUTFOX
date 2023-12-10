@@ -1,5 +1,5 @@
 # OUTFOX🦊
-### This is the official code and data for our new preprint: [OUTFOX: LLM-generated Essay Detection through In-context Learning with Adversarially Generated Examples](https://arxiv.org/abs/2307.11729)
+### This is the official code and data for our [AAAI 2024 paper](https://arxiv.org/abs/2307.11729), "OUTFOX: LLM-generated Essay Detection through In-context Learning with Adversarially Generated Examples"
 
 ## 🔨 Setup
 - python==3.9.2
