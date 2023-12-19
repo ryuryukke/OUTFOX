@@ -1,6 +1,19 @@
 # OUTFOX🦊
 ### This is the official code and data for our [AAAI 2024 paper](https://arxiv.org/abs/2307.11729), "OUTFOX: LLM-generated Essay Detection through In-context Learning with Adversarially Generated Examples"
 
+## 📚 Citation
+#### If our work inspires you, please consider citing our work as follows:
+```
+@InProceedings{Koike:OUTFOX:2024,
+  author={Ryuto Koike and Masahiro Kaneko and Naoaki Okazaki},
+  title={OUTFOX: LLM-generated Essay Detection through In-context Learning with Adversarially Generated Examples},
+  booktitle = {Proceedings of the 38th AAAI Conference on Artificial Intelligence},
+  year      = {2024},
+  month     = {February},
+  address   = {Vancouver, Canada}
+}
+```
+
 ## 🔨 Setup
 - python==3.9.2
 ```
@@ -31,17 +44,3 @@ This is supplemental information about the file names consisting of our dataset.
 Additionally, `(train\|valid\|test)_contexts.pkl` includes the prompts used to generate essays in each set. We use these to compute the likelihood in statistical outlier detectors.
 
 We also provide the attacked essays by our OUTFOX attacker in `data/chatgpt/test/test_outfox_attacks.pkl` and the attacked essays by DIPPER in `data/dipper/(chatgpt|text_davinci_003|flan_t5_xxl)/test_attacks.pkl`.
-
-
-## 📚 Citation
-#### If our work inspires you, please consider citing our work as follows:
-```
-@misc{koike2023outfox,
-      title={OUTFOX: LLM-generated Essay Detection through In-context Learning with Adversarially Generated Examples}, 
-      author={Ryuto Koike and Masahiro Kaneko and Naoaki Okazaki},
-      year={2023},
-      eprint={2307.11729},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL}
-}
-```
