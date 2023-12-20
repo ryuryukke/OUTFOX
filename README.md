@@ -17,6 +17,9 @@
 }
 ```
 
+## 📢 Updates
+- **Aug. 2023**: Our code and essay dataset are now available!
+
 ## 🔨 Setup
 - python==3.9.2
 ```
