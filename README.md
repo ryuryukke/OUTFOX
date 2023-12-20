@@ -1,6 +1,7 @@
 # OUTFOX🦊
 ![](https://img.shields.io/badge/Made_with-python-blue.svg)
 [![arXiv](https://img.shields.io/badge/arXiv-2307.11729-b31b1b.svg)](https://arxiv.org/abs/2307.11729)
+![](https://img.shields.io/badge/License-Apache--2.0-green.svg)
 ### This is the official code and data for our [AAAI 2024 paper](https://arxiv.org/abs/2307.11729), "OUTFOX: LLM-generated Essay Detection through In-context Learning with Adversarially Generated Examples"
 
 ## 📚 Citation
