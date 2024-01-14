@@ -13,7 +13,7 @@
 ```
 @InProceedings{Koike:OUTFOX:2024,
   author    = {Ryuto Koike and Masahiro Kaneko and Naoaki Okazaki},
-  title     = {OUTFOX: LLM-generated Essay Detection through In-context Learning with Adversarially Generated Examples},
+  title     = {OUTFOX: LLM-Generated Essay Detection Through In-Context Learning with Adversarially Generated Examples},
   booktitle = {Proceedings of the 38th AAAI Conference on Artificial Intelligence},
   year      = {2024},
   month     = {February},
