@@ -4,6 +4,10 @@
 [![LICENSE](https://img.shields.io/badge/License-Apache--2.0-green.svg)](https://github.com/ryuryukke/OUTFOX?tab=Apache-2.0-1-ov-file)
 ### This is the official code and data for our [AAAI 2024 paper](https://arxiv.org/abs/2307.11729), "OUTFOX: LLM-generated Essay Detection through In-context Learning with Adversarially Generated Examples"
 
+<p align="center">
+  <img width="600" src="https://github.com/ryuryukke/OUTFOX/assets/61570900/f0860a26-e8fa-4449-a9b1-ff6868ec582d" />
+</p>
+
 ## 📚 Citation
 #### If our work inspires you, please consider citing our work as follows:
 ```
