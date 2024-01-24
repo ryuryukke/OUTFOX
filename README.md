@@ -13,12 +13,12 @@
 Current LLM-generated text detectors lack robustness against attacks: they degrade detection accuracy by simply paraphrasing LLM-generated texts.
 Furthermore, a malicious user might attempt to deliberately evade the detectors based on detection results, but this has not been assumed in previous studies.
 
-In this paper, we propose **OUTFOX**, a framework that improves the robustness of LLM detectors by allowing both the detector and the attacker to consider each other's output.
+In this paper, we propose _**OUTFOX**_, a framework that improves the robustness of LLM detectors by allowing both the detector and the attacker to consider each other's output.
 In this framework, the attacker uses the detector's prediction labels as examples for in-context learning and adversarially generates essays that are harder to detect, while the detector uses the adversarially generated essays as examples for in-context learning to learn to detect essays from a strong attacker.
 
 Experiments in the domain of student essays show that...
 - The proposed detector improves the detection performance on the attacker-generated texts by up to +41.3 points F1-score. 
-- The proposed detector shows a state-of-the-art detection performance: up to 96.9 points F1-score, beating existing detectors on non-attacked texts.
+- The proposed detector shows a _**state-of-the-art**_ detection performance: up to 96.9 points F1-score, beating existing detectors on non-attacked texts.
 - The proposed attacker drastically degrades the performance of detectors by up to -57.0 points F1-score, massively outperforming the baseline paraphrasing method for evading detection.
 
 ## 📢 Updates
