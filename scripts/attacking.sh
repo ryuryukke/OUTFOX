@@ -1,3 +1,4 @@
+cd ../src/attacking
 # OUTFOX attack
 python outfox_attacking.py
 
