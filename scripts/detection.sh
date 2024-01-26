@@ -1,5 +1,5 @@
-# OUTFOX detection without considering attacks on test set by various lms.
 cd ../src/detection/
+# OUTFOX detection without considering attacks on test set by various lms.
 python outfox_detection_without_considering_attack.py --model_name chatgpt
 python outfox_detection_without_considering_attack.py --model_name flan_t5_xxl
 python outfox_detection_without_considering_attack.py --model_name text_davinci_003
