@@ -57,7 +57,7 @@ Additionally, `(train\|valid\|test)_contexts.pkl` includes the prompts used to g
 We also provide the attacked essays by our OUTFOX attacker in `data/chatgpt/test/test_outfox_attacks.pkl` and the attacked essays by DIPPER in `data/dipper/(chatgpt|text_davinci_003|flan_t5_xxl)/test_attacks.pkl`.
 
 ## 📚 Citation
-#### If our work inspires you, please consider citing our work as follows:
+#### If you find our code/data/models or ideas useful in your research, please consider citing our work as follows:
 ```
 @InProceedings{Koike:OUTFOX:2024,
   author    = {Ryuto Koike and Masahiro Kaneko and Naoaki Okazaki},
