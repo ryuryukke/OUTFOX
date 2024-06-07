@@ -68,6 +68,3 @@ We also provide the attacked essays by our OUTFOX attacker in `data/chatgpt/test
   address   = {Vancouver, Canada}
 }
 ```
-
-## 📩 Contact
-Feel free to contact [Ryuto Koike](ryuto.koike@nlp.c.titech.ac.jp) if you have any questions.
