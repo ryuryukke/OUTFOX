@@ -6,7 +6,8 @@
 ### This is the official code and data for our [AAAI 2024 paper](https://ojs.aaai.org/index.php/AAAI/article/view/30120), "OUTFOX: LLM-Generated Essay Detection Through In-Context Learning with Adversarially Generated Examples"
 
 <p align="center">
-  <img src="https://github.com/ryuryukke/OUTFOX/assets/61570900/4626abf6-5c75-43c9-91c0-812804e79104" width="500"/>
+<img src="https://github.com/user-attachments/assets/39d5d34e-779d-49f0-b335-e7e2528f49d2" width="500"/>
+<!--   <img src="https://github.com/ryuryukke/OUTFOX/assets/61570900/4626abf6-5c75-43c9-91c0-812804e79104" width="500"/> -->
 </p>
 
 ## 📖 Introduction
