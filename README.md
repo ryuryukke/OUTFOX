@@ -10,6 +10,9 @@
 <!--   <img src="https://github.com/ryuryukke/OUTFOX/assets/61570900/4626abf6-5c75-43c9-91c0-812804e79104" width="500"/> -->
 </p>
 
+## 💨 TL;DR
+_We proposed OUTFOX, a framework that improves the robustness of LLM text detectors by allowing both the detector and the attacker to consider each other's output._
+
 ## 📖 Introduction
 Current LLM-generated text detectors lack robustness against attacks: they degrade detection accuracy by simply paraphrasing LLM-generated texts.
 Furthermore, there is the unexplored risk where malicious users might exploit LLMs to create texts specifically designed to evade detection.
