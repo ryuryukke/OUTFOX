@@ -10,6 +10,7 @@
 <!--   <img src="https://github.com/ryuryukke/OUTFOX/assets/61570900/4626abf6-5c75-43c9-91c0-812804e79104" width="500"/> -->
 </p>
 
+
 ## 💨 TL;DR
 _We proposed OUTFOX, a framework that improves the robustness of LLM text detectors by allowing both the detector and the attacker to consider each other's output. Also, to the best of our knowledge, we pioneered **LLMs as detectors** by employing in-context learning._
 
@@ -26,7 +27,7 @@ Experiments in the domain of student essays show that...
 - The proposed attacker drastically degrades the performance of detectors by up to -57.0 points F1-score, massively outperforming the baseline paraphrasing method for evading detection.
 
 ## 📢 Updates
-- **Feb 2024**: Presented in AAAI 2024, Vancouver! [[poster](https://drive.google.com/file/d/1b4qm0wvCftNA2MKr5nevDtTALzUdqtbW/view?usp=drive_link)]
+- 🎉 **Feb 2024**: Presented in AAAI 2024, Vancouver! [[poster](https://drive.google.com/file/d/1b4qm0wvCftNA2MKr5nevDtTALzUdqtbW/view?usp=drive_link)]
 - **Aug 2023**: Our code and essay dataset are now available!
 
 ## 🔨 Setup
@@ -41,6 +42,11 @@ Run any script in the `scripts` directory.
 `scripts/detection.sh` is a script for our OUTFOX detection and baseline detections.
 
 `scripts/attacking.sh` is a script for our OUTFOX attacking and baseline paraphrasing attack.
+
+> [!NOTE]  
+> Customized Usage of OUTFOX:
+> 
+> - Replace the OUTFOX detector or attacker with the ones you focus on for the best results (e.g., When you have an attack to consider, you can replace the OUTFOX attacker with the attacker.)
 
 ## :page_facing_up: Dataset Info
 We created our dataset based on [Kaggle FeedBack Prize](https://www.kaggle.com/competitions/feedback-prize-effectiveness), and our dataset contains 15,400 triplets of essay problem statements, human(native-student)-written essays, and LLM-generated essays. The native students range from 6th to 12th grade in the U.S.
