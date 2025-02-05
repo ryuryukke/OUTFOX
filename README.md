@@ -27,7 +27,7 @@ Experiments in the domain of student essays show that...
 - The proposed attacker drastically degrades the performance of detectors by up to -57.0 points F1-score, massively outperforming the baseline paraphrasing method for evading detection.
 
 ## 📢 Updates
-- 🎉 **Feb 2024**: Presented in AAAI 2024, Vancouver! [[poster](https://drive.google.com/file/d/1b4qm0wvCftNA2MKr5nevDtTALzUdqtbW/view?usp=drive_link)]
+- 🎉 **Feb 2024**: Presented in AAAI 2024, Vancouver! [[Poster](https://drive.google.com/file/d/1b4qm0wvCftNA2MKr5nevDtTALzUdqtbW/view?usp=drive_link), [Technical Appendix](https://drive.google.com/file/d/1mnxZ2v7hV4xNUdSOyy-IfAEbE4WRr1Ud/view)]
 - **Aug 2023**: Our code and essay dataset are now available!
 
 ## 🔨 Setup
