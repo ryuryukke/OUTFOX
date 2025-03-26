@@ -12,7 +12,7 @@
 
 
 ## 💨 TL;DR
-_We proposed OUTFOX, a framework that improves the robustness of LLM text detectors by allowing both the detector and the attacker to consider each other's output. Also, to the best of our knowledge, we pioneered **LLMs as detectors** by employing in-context learning._
+_We proposed OUTFOX, a framework that improves the robustness of LLM text detectors by allowing both the detector and the attacker to consider each other's output. Also, we pioneered effective **LLM-as-a-detector** by employing in-context learning._
 
 ## 📖 Introduction
 Current LLM-generated text detectors lack robustness against attacks: they degrade detection accuracy by simply paraphrasing LLM-generated texts.
