@@ -1,7 +1,4 @@
 # OUTFOX🦊
-![](https://img.shields.io/badge/Made_with-python-blue.svg)
-[![arXiv](https://img.shields.io/badge/arXiv-2307.11729-b31b1b.svg)](https://arxiv.org/abs/2307.11729)
-[![LICENSE](https://img.shields.io/badge/License-Apache--2.0-green.svg)](https://github.com/ryuryukke/OUTFOX?tab=Apache-2.0-1-ov-file)
 
 ### This is the official code and data for our [AAAI 2024 paper](https://ojs.aaai.org/index.php/AAAI/article/view/30120), "OUTFOX: LLM-Generated Essay Detection Through In-Context Learning with Adversarially Generated Examples"
 
@@ -10,9 +7,16 @@
 <!--   <img src="https://github.com/ryuryukke/OUTFOX/assets/61570900/4626abf6-5c75-43c9-91c0-812804e79104" width="500"/> -->
 </p>
 
+<p align="center">
+  <a href=""><img src="https://img.shields.io/badge/Made_with-python-blue.svg"/></a>
+  <a href="https://ryuryukke.github.io/"><img src="https://img.shields.io/badge/NLP-NLP?label=Institute%20of%20Science%20Tokyo"/></a>
+  <a href="https://arxiv.org/abs/2307.11729"><img src="https://img.shields.io/badge/arXiv-2307.11729-b31b1b.svg"/></a>
+  <a href="https://github.com/ryuryukke/OUTFOX?tab=Apache-2.0-1-ov-file"><img src="https://img.shields.io/badge/License-Apache--2.0-green.svg"/></a>
+</p>
+
 
 ## 💨 TL;DR
-_We proposed OUTFOX, a framework that improves the robustness of LLM text detectors by allowing both the detector and the attacker to consider each other's output. Also, we pioneered effective **LLM-as-a-detector** by employing in-context learning._
+_We proposed OUTFOX, a framework that improves the robustness of LLM text detectors by allowing both the detector and the attacker to consider each other's output. This paper is among the first to effectively use AI to detect AI._
 
 ## 📖 Introduction
 Current LLM-generated text detectors lack robustness against attacks: they degrade detection accuracy by simply paraphrasing LLM-generated texts.
@@ -65,6 +69,8 @@ This is supplemental information about the file names consisting of our dataset.
 Additionally, `(train\|valid\|test)_contexts.pkl` includes the prompts used to generate essays in each set. We use these to compute the likelihood in statistical outlier detectors.
 
 We also provide the attacked essays by our OUTFOX attacker in `data/chatgpt/test/test_outfox_attacks.pkl` and the attacked essays by DIPPER in `data/dipper/(chatgpt|text_davinci_003|flan_t5_xxl)/test_attacks.pkl`.
+
+For more details on how we create this dataset, please see our [Technical Appendix](https://drive.google.com/file/d/1mnxZ2v7hV4xNUdSOyy-IfAEbE4WRr1Ud/view).
 
 ## 📚 Citation
 #### If you find our code/data/models or ideas useful in your research, please consider citing our work as follows:
